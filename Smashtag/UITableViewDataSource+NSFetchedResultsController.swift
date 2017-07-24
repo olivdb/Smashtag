@@ -10,7 +10,7 @@
 import UIKit
 import CoreData
 
-/*extension TweetersTableViewController
+extension PopularTableViewController
 {
     // MARK: UITableViewDataSource
     
@@ -42,4 +42,4 @@ import CoreData
         return fetchedResultsController?.section(forSectionIndexTitle: title, at: index) ?? 0
     }
     
-}*/
+}

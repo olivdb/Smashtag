@@ -13,7 +13,7 @@ import Twitter
 class Tweet: NSManagedObject {
 
     class func findOrCreateTweet(matching tweetInfo: Twitter.Tweet,
-                                 for searchTerm: String,
+                                 with searchTerm: String,
                                  in context: NSManagedObjectContext) throws -> Tweet
     {
         let request: NSFetchRequest<Tweet> = Tweet.fetchRequest()

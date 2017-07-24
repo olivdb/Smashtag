@@ -13,7 +13,9 @@ class RecentTableViewController: UITableViewController {
 
     struct StoryboardIdentifiers {
         static let recentSearchCell = "RecentSearch"
+        
         static let searchRecentSegue = "Search Recent"
+        static let popularMentionsSegue = "Popular Mentions"
     }
     
     // MARK: View Controller Lifecycle
@@ -74,6 +76,11 @@ class RecentTableViewController: UITableViewController {
             let tvCell = sender as? UITableViewCell,
             let tweetVC = segue.destination as? TweetTableViewController {
             tweetVC.searchText = tvCell.textLabel?.text
+        } else if segue.identifier == StoryboardIdentifiers.popularMentionsSegue,
+            let tvCell = sender as? UITableViewCell,
+            let popularVC = segue.destination as? PopularTableViewController {
+            popularVC.searchTerm = tvCell.textLabel?.text
+            popularVC.container = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer
         }
     }
  
