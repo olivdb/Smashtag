@@ -33,6 +33,7 @@ class Mention: NSManagedObject {
         
         let mention = Mention(context: context)
         mention.keyword = keyword.lowercased()
+        mention.type = keyword.hasPrefix("#") ? "Hashtags" : "Users"
         mention.searchTerm = searchTerm.lowercased()
         mention.addToTweets(tweet)
         mention.count = 1

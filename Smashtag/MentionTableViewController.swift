@@ -158,8 +158,7 @@ class MentionTableViewController: UITableViewController {
         if segue.identifier == StoryboardIdentifiers.searchMentionSegue,
             let tvCell = sender as? UITableViewCell,
             let searchVC = segue.destination as? TweetTableViewController,
-            var keyword = tvCell.textLabel?.text {
-            if keyword.hasPrefix("@") { keyword += " OR from:\(keyword)" }
+            let keyword = tvCell.textLabel?.text {
             searchVC.searchText = keyword
         } else if segue.identifier == StoryboardIdentifiers.showImageSegue,
             let itvCell = sender as? ImageTableViewCell,

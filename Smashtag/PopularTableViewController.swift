@@ -21,12 +21,15 @@ class PopularTableViewController: FetchedResultsTableViewController {
             title = "Popular mentions for \(searchTerm)"
             if let context = container?.viewContext {
                 let request: NSFetchRequest<Mention> = Mention.fetchRequest()
-                request.sortDescriptors = [NSSortDescriptor(key: "count", ascending: false)]
-                request.predicate = NSPredicate(format: "searchTerm =[c] %@", searchTerm)
+                request.sortDescriptors = [
+                    NSSortDescriptor(key: "type", ascending: true),
+                    NSSortDescriptor(key: "count", ascending: false),
+                    NSSortDescriptor(key: "keyword", ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare(_:)))]
+                request.predicate = NSPredicate(format: "searchTerm =[c] %@ AND count > 1", searchTerm)
                 fetchedResultsController = NSFetchedResultsController(
                     fetchRequest: request,
                     managedObjectContext: context,
-                    sectionNameKeyPath: nil,
+                    sectionNameKeyPath: "type",
                     cacheName: nil)
                 fetchedResultsController?.delegate = self
                 try? fetchedResultsController?.performFetch()
@@ -37,6 +40,7 @@ class PopularTableViewController: FetchedResultsTableViewController {
     
     private struct StoryboardIdentifiers {
         static let popularMentionCell = "Popular Mention Cell"
+        static let searchMentionSegue = "Search Mention"
     }
     
     var fetchedResultsController: NSFetchedResultsController<Mention>?
@@ -49,6 +53,15 @@ class PopularTableViewController: FetchedResultsTableViewController {
         }
         
         return cell
+    }
+    
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == StoryboardIdentifiers.searchMentionSegue,
+            let cell = sender as? UITableViewCell,
+            let tweetVC = segue.destination as? TweetTableViewController {
+            tweetVC.searchText = cell.textLabel?.text
+        }
     }
 
 }

@@ -23,9 +23,13 @@ class SmashTweetTableViewController: TweetTableViewController {
     private func updateDatabase(with newTweets: [Twitter.Tweet]) {
         if let searchText = self.searchText {
             container?.performBackgroundTask { [weak self] (context) in
+                /*** One by one tweet loading -- inefficient
                 for tweetInfo in newTweets {
                     _ = try? Tweet.findOrCreateTweet(matching: tweetInfo, with: searchText, in: context)
                 }
+                ***/
+                try? Tweet.createNotExistingTweets(from: newTweets, with: searchText, in: context)
+                
                 try? context.save()
                 self?.printDBStatistics()
             }

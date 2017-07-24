@@ -435,6 +435,9 @@
                                         </label>
                                     </subviews>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <segue destination="qGf-I8-8L8" kind="show" identifier="Search Mention" id="aYR-39-3s0"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -486,6 +489,6 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="CHw-my-Yd3"/>
+        <segue reference="aYR-39-3s0"/>
     </inferredMetricsTieBreakers>
 </document>

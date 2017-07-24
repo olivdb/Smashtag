@@ -54,7 +54,8 @@ class TweetTableViewController: UITableViewController, UITextFieldDelegate
     // just creates a Twitter.Request
     // that finds tweets that match our searchText
     private func twitterRequest() -> Twitter.Request? {
-        if let query = searchText, !query.isEmpty {
+        if var query = searchText, !query.isEmpty {
+            if query.hasPrefix("@") { query += " OR from:\(query)" }
             return Twitter.Request(search: "\(query)", count: 100)
         }
         return nil

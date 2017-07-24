@@ -27,15 +27,39 @@ class Tweet: NSManagedObject {
             return matches[0]
         }
         
+        return try createTweet(matching: tweetInfo, with: searchTerm, in: context)
+    }
+    
+    class func createNotExistingTweets(from newTweets: [Twitter.Tweet],
+                                       with searchTerm: String,
+                                       in context: NSManagedObjectContext) throws
+    {
+        let newTweetIds = newTweets.map { $0.identifier }
+        let request: NSFetchRequest<Tweet> = Tweet.fetchRequest()
+        request.predicate = NSPredicate(format: "searchTerm = %@ AND unique IN %@",
+                                        searchTerm, newTweetIds)
+        let existingTweetIds = try context.fetch(request).map { $0.unique }
+
+        for tweet in newTweets {
+            if !existingTweetIds.contains(where: { $0 == tweet.identifier } ) {
+                _ = try createTweet(matching: tweet, with: searchTerm, in: context)
+            }
+        }
+    }
+    
+    private class func createTweet(matching tweetInfo: Twitter.Tweet,
+                             with searchTerm: String,
+                             in context: NSManagedObjectContext) throws -> Tweet
+    {
         let tweet = Tweet(context: context)
         tweet.unique = tweetInfo.identifier
         tweet.searchTerm = searchTerm.lowercased()
         let mentionKeywords = (tweetInfo.hashtags + tweetInfo.userMentions).map { $0.keyword }
         for mentionKeyword in mentionKeywords {
             _ = try Mention.updateOrCreateMention(for: tweet,
-                                          withKeyword: mentionKeyword,
-                                          andSearchTerm: searchTerm,
-                                          in: context)
+                                                  withKeyword: mentionKeyword,
+                                                  andSearchTerm: searchTerm,
+                                                  in: context)
         }
         return tweet
     }
