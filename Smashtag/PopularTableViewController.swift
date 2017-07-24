@@ -19,6 +19,19 @@ class PopularTableViewController: FetchedResultsTableViewController {
     private func updateUI() {
         if let searchTerm = searchTerm {
             title = "Popular mentions for \(searchTerm)"
+            if let context = container?.viewContext {
+                let request: NSFetchRequest<Mention> = Mention.fetchRequest()
+                request.sortDescriptors = [NSSortDescriptor(key: "count", ascending: false)]
+                request.predicate = NSPredicate(format: "searchTerm =[c] %@", searchTerm)
+                fetchedResultsController = NSFetchedResultsController(
+                    fetchRequest: request,
+                    managedObjectContext: context,
+                    sectionNameKeyPath: nil,
+                    cacheName: nil)
+                fetchedResultsController?.delegate = self
+                try? fetchedResultsController?.performFetch()
+                tableView.reloadData()
+            }
         }
     }
     
@@ -30,7 +43,6 @@ class PopularTableViewController: FetchedResultsTableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: StoryboardIdentifiers.popularMentionCell, for: indexPath)
-        
         if let mention = fetchedResultsController?.object(at: indexPath) {
             cell.textLabel?.text = mention.keyword
             cell.detailTextLabel?.text = "\(mention.count) tweet\((mention.count > 1 ? "s" : ""))"
