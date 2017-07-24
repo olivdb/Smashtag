@@ -33,7 +33,7 @@ class ImageCollectionViewController: UICollectionViewController {
     }
     
     // Public API
-    var tweets = [Tweet]() {
+    var tweets = Array<Twitter.Tweet>() {
         didSet {
             tweetMedias = tweets.flatMap { tweet in
                 tweet.media.map { TweetMedia(tweet: tweet, media: $0) }

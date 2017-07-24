@@ -43,7 +43,7 @@ class TweetTableViewController: UITableViewController, UITextFieldDelegate
         }
     }
     
-    func insertTweets(_ newTweets: [Twitter.Tweet]) {
+    internal func insertTweets(_ newTweets: [Twitter.Tweet]) {
         self.tweets.insert(newTweets, at:0)
         self.tableView.insertSections([0], with: .fade)
     }
@@ -163,7 +163,7 @@ class TweetTableViewController: UITableViewController, UITextFieldDelegate
 
         // get the tweet that is associated with this row
         // that the table view is asking us to provide a UITableViewCell for
-        let tweet: Tweet = tweets[indexPath.section][indexPath.row]
+        let tweet: Twitter.Tweet = tweets[indexPath.section][indexPath.row]
 
         // Configure the cell...
         // the textLabel and detailTextLabel are for non-Custom cells
