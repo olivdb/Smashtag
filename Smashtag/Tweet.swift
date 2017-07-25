@@ -63,4 +63,32 @@ class Tweet: NSManagedObject {
         }
         return tweet
     }
+    
+    override func prepareForDeletion() {
+        if let mentions = mentions as? Set<Mention> {
+            for mention in mentions {
+                mention.count -= 1
+                if let mentionTweets = mention.tweets as? Set<Tweet> {
+                    if mentionTweets.filter({ !$0.isDeleted }).isEmpty {
+                        self.managedObjectContext?.delete(mention)
+                    }
+                }
+            }
+        }
+    }
+    
+    class func deleteOldTweets(in context: NSManagedObjectContext) throws {
+        // We will delete all tweets for searchTerms that are no longer in RecentSearches.searches
+        let request: NSFetchRequest<Tweet> = Tweet.fetchRequest()
+        let searchTermsToKeep = RecentSearches.searches.map { $0.lowercased() }
+        request.predicate = NSPredicate(format: "NOT(searchTerm IN %@)", searchTermsToKeep)
+        if let tweetsToDelete = try? context.fetch(request) {
+            for tweet in tweetsToDelete {
+                context.delete(tweet)
+            }
+            print("Deleted \(tweetsToDelete.count) old tweet(s)")
+            try context.save()
+        }
+    }
+    
 }
